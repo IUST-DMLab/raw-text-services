@@ -3,6 +3,7 @@ package ir.ac.iust.dml.kg.raw.services.web.rest;
 import io.swagger.annotations.Api;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,15 @@ public class EntityEvaluationRestServices {
   @Autowired
   private OccurrenceRepository dao;
 
-  @RequestMapping(value = "/edit", method = RequestMethod.GET)
+  @RequestMapping(value = "/approve", method = RequestMethod.GET)
   @ResponseBody
-  public Occurrence edit(@RequestBody Occurrence occurrence) throws Exception {
-    return dao.save(occurrence);
+  public Occurrence edit(@RequestParam String id,
+                         @RequestParam(required = false) Boolean approved) throws Exception {
+    final Occurrence e = dao.findOne(new ObjectId(id));
+    if (e == null) return null;
+    e.setApproved(approved);
+    dao.save(e);
+    return e;
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.GET)

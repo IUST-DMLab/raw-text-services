@@ -38,6 +38,11 @@ public class Occurrence {
     this.uid = uid;
   }
 
+  public String getId() {
+    if (uid == null) return null;
+    return uid.toHexString();
+  }
+
   public int getOccurrence() {
     return occurrence;
   }
