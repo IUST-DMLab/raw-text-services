@@ -60,6 +60,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>ir.ac.iust.dml.kg.raw.extractTriple</groupId>
+            <artifactId>extractTriple</artifactId>
+            <version>0.1.0</version>
+        </dependency>
         <!-- Spring and Transactions -->
         <dependency>
             <groupId>org.springframework</groupId>
