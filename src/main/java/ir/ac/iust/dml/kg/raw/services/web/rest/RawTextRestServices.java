@@ -76,6 +76,15 @@ public class RawTextRestServices {
     return e;
   }
 
+  @RequestMapping(value = "/removeRule", method = RequestMethod.GET)
+  @ResponseBody
+  public Rule removeRule(@RequestParam String id) throws Exception {
+    final Rule e = ruleDao.findOne(new ObjectId(id));
+    if (e == null) return null;
+    ruleDao.delete(e);
+    return e;
+  }
+
   @RequestMapping(value = "/ruleTest", method = RequestMethod.POST)
   @ResponseBody
   public List<Triple> ruleTest(@RequestBody RuleTestData data) throws Exception {
