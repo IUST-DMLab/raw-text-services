@@ -1,26 +1,19 @@
 package ir.ac.iust.dml.kg.raw.services.web.rest.data;
 
+import ir.ac.iust.dml.kg.raw.rulebased.RuleAndPredicate;
+
 import java.util.List;
 
 public class RuleTestData {
-  private List<String> rules;
-  private List<String> predicates;
+  private List<RuleAndPredicate> rules;
   private String text;
 
-  public List<String> getRules() {
+  public List<RuleAndPredicate> getRules() {
     return rules;
   }
 
-  public void setRules(List<String> rules) {
+  public void setRules(List<RuleAndPredicate> rules) {
     this.rules = rules;
-  }
-
-  public List<String> getPredicates() {
-    return predicates;
-  }
-
-  public void setPredicates(List<String> predicates) {
-    this.predicates = predicates;
   }
 
   public String getText() {

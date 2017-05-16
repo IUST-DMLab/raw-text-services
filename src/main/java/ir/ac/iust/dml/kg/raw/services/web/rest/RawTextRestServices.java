@@ -67,10 +67,12 @@ public class RawTextRestServices {
   public Rule editRule(
       @RequestParam(required = false) String id,
       @RequestParam String rule,
+      @RequestParam String predicate,
       @RequestParam boolean approved) throws Exception {
     Rule e = (id == null) ? null : ruleDao.findOne(new ObjectId(id));
     if (e == null) e = new Rule();
     e.setRule(rule);
+    e.setPredicate(predicate);
     e.setApproved(approved);
     ruleDao.save(e);
     return e;
@@ -89,7 +91,7 @@ public class RawTextRestServices {
   @ResponseBody
   public List<Triple> ruleTest(@RequestBody RuleTestData data) throws Exception {
     List<Triple> result = new ArrayList<>();
-    ExtractTriple extractTriple = new ExtractTriple(data.getRules(), data.getPredicates());
+    ExtractTriple extractTriple = new ExtractTriple(data.getRules());
     final List<String> lines = SentenceTokenizer.SentenceSplitterRaw(data.getText());
     for (String line : lines) {
       Annotation annotation = new Annotation(line);

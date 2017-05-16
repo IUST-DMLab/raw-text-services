@@ -11,6 +11,7 @@ public class Rule {
   @JsonIgnore
   private ObjectId uid;
   private String rule;
+  private String predicate;
   private boolean approved;
 
   public String getId() {
@@ -32,6 +33,14 @@ public class Rule {
 
   public void setRule(String rule) {
     this.rule = rule;
+  }
+
+  public String getPredicate() {
+    return predicate;
+  }
+
+  public void setPredicate(String predicate) {
+    this.predicate = predicate;
   }
 
   public boolean isApproved() {
