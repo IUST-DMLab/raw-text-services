@@ -65,7 +65,7 @@ public class RawTextRestServices {
   @RequestMapping(value = "/editRule", method = RequestMethod.GET)
   @ResponseBody
   public Rule editRule(
-      @RequestParam String id,
+      @RequestParam(required = false) String id,
       @RequestParam String rule,
       @RequestParam boolean approved) throws Exception {
     Rule e = (id == null) ? null : ruleDao.findOne(new ObjectId(id));
