@@ -8,8 +8,10 @@ import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
 import ir.ac.iust.dml.kg.raw.rulebased.Triple;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Rule;
+import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.RuleRepository;
+import ir.ac.iust.dml.kg.raw.services.logic.UserLogic;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class RawTextRestServices {
 
   @Autowired
   private OccurrenceRepository occurrenceDao;
+  @Autowired
+  private UserLogic userLogic;
   @Autowired
   private RuleRepository ruleDao;
   private final TextProcess tp = new TextProcess();
@@ -49,9 +53,27 @@ public class RawTextRestServices {
       @RequestParam(defaultValue = "10") int pageSize,
       @RequestParam(required = false) String predicate,
       @RequestParam(required = false) Integer minOccurrence,
-      @RequestParam(required = false) Boolean approved
+      @RequestParam(required = false) Boolean approved,
+      @RequestParam(required = false) String assigneeUsername
   ) throws Exception {
-    return occurrenceDao.search(page, pageSize, predicate, minOccurrence, approved);
+    User assigneeUser = userLogic.getUser(assigneeUsername);
+    return occurrenceDao.search(page, pageSize, predicate, minOccurrence, approved, null, assigneeUser);
+  }
+
+  @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
+  @ResponseBody
+  public List<User> listUsers() throws Exception {
+    return userLogic.findAll();
+  }
+
+  @RequestMapping(value = "/assign", method = RequestMethod.GET)
+  @ResponseBody
+  public int assign(
+      @RequestParam String username,
+      @RequestParam(required = false) String predicate,
+      @RequestParam int count
+  ) throws Exception {
+    return userLogic.assign(username, predicate, count);
   }
 
   @RequestMapping(value = "/rules", method = RequestMethod.GET)

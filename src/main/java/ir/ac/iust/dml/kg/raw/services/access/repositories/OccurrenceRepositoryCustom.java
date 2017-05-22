@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.raw.services.access.repositories;
 
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
+import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import org.springframework.data.domain.Page;
 
 /**
@@ -9,5 +10,6 @@ import org.springframework.data.domain.Page;
  */
 public interface OccurrenceRepositoryCustom {
 
-  Page<Occurrence> search(int page, int pageSize, String predicate, Integer minOccurrence, Boolean approved);
+  Page<Occurrence> search(int page, int pageSize, String predicate, Integer minOccurrence,
+                          Boolean approved, Boolean assignee, User assigneeUser);
 }

@@ -3,6 +3,7 @@ package ir.ac.iust.dml.kg.raw.services.access.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -29,6 +30,8 @@ public class Occurrence {
   private String predicate;
   private String subject;
   private Boolean approved;
+  @DBRef
+  private User assignee;
 
   public ObjectId getUid() {
     return uid;
@@ -137,5 +140,13 @@ public class Occurrence {
 
   public void setApproved(Boolean approved) {
     this.approved = approved;
+  }
+
+  public User getAssignee() {
+    return assignee;
+  }
+
+  public void setAssignee(User assignee) {
+    this.assignee = assignee;
   }
 }

@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.raw.services.access.repositories;
 
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
+import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,11 +18,14 @@ public class OccurrenceRepositoryImpl implements OccurrenceRepositoryCustom {
   private MongoTemplate op;
 
   @Override
-  public Page<Occurrence> search(int page, int pageSize, String predicate, Integer minOccurrence, Boolean approved) {
+  public Page<Occurrence> search(int page, int pageSize, String predicate, Integer minOccurrence, Boolean approved,
+                                 Boolean assignee, User assigneeUser) {
     Query query = new Query();
     if (predicate != null) query.addCriteria(Criteria.where("predicate").regex(predicate));
     if (minOccurrence != null) query.addCriteria(Criteria.where("occurrence").gte(minOccurrence));
     if (approved != null) query.addCriteria(Criteria.where("approved").is(approved));
+    if (assignee != null) query.addCriteria(Criteria.where("assignee").exists(assignee));
+    if (assigneeUser != null) query.addCriteria(Criteria.where("assignee").is(assigneeUser));
     return page(op, query, page, pageSize, Occurrence.class);
   }
 
