@@ -64,7 +64,13 @@ public class RawTextRestServices {
     if (approved != null && approved) approvedCount = p.getTotalElements();
     else approvedCount = occurrenceDao.search(0, 1, predicate, minOccurrence,
         true, null, assigneeUser).getTotalElements();
-    return new OccurrenceSearchResult(p, approvedCount);
+
+    final long rejectedCount;
+    if (approved != null && !approved) rejectedCount = p.getTotalElements();
+    else rejectedCount = occurrenceDao.search(0, 1, predicate, minOccurrence,
+        false, null, assigneeUser).getTotalElements();
+
+    return new OccurrenceSearchResult(p, approvedCount, rejectedCount);
   }
 
   @RequestMapping(value = "/listUsers", method = RequestMethod.GET)

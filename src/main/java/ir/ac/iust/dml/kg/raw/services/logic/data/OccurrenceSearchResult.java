@@ -6,13 +6,15 @@ import org.springframework.data.domain.Page;
 public class OccurrenceSearchResult {
   private Page<Occurrence> page;
   private Long numberOfApproved;
+  private Long numberOfRejected;
 
   public OccurrenceSearchResult() {
   }
 
-  public OccurrenceSearchResult(Page<Occurrence> page, Long numberOfApproved) {
+  public OccurrenceSearchResult(Page<Occurrence> page, Long numberOfApproved, Long numberOfRejected) {
     this.page = page;
     this.numberOfApproved = numberOfApproved;
+    this.numberOfRejected = numberOfRejected;
   }
 
   public Page<Occurrence> getPage() {
@@ -29,5 +31,13 @@ public class OccurrenceSearchResult {
 
   public void setNumberOfApproved(Long numberOfApproved) {
     this.numberOfApproved = numberOfApproved;
+  }
+
+  public Long getNumberOfRejected() {
+    return numberOfRejected;
+  }
+
+  public void setNumberOfRejected(Long numberOfRejected) {
+    this.numberOfRejected = numberOfRejected;
   }
 }
