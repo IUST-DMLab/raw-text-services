@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.index.*;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Occurrence {
   @Id
   @JsonIgnore
   private ObjectId uid;
+  @Indexed
   private int occurrence;
   private String normalized;
   private List<String> words;
@@ -27,8 +29,10 @@ public class Occurrence {
   private String subjectType;
   @Field("object_type")
   private String objectType;
+  @Indexed
   private String predicate;
   private String subject;
+  @Indexed
   private Boolean approved;
   @DBRef
   private User assignee;
