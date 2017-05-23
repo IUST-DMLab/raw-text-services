@@ -61,7 +61,7 @@ public class RawTextRestServices {
     final Page<Occurrence> p = occurrenceDao.search(page, pageSize, predicate, minOccurrence,
         approved, null, assigneeUser);
     final long approvedCount;
-    if (approved) approvedCount = p.getTotalElements();
+    if (approved != null && approved) approvedCount = p.getTotalElements();
     else approvedCount = occurrenceDao.search(0, 1, predicate, minOccurrence,
         true, null, assigneeUser).getTotalElements();
     return new OccurrenceSearchResult(p, approvedCount);
