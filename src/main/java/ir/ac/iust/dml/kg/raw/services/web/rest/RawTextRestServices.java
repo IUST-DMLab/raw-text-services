@@ -12,6 +12,7 @@ import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.RuleRepository;
 import ir.ac.iust.dml.kg.raw.services.logic.UserLogic;
+import ir.ac.iust.dml.kg.raw.services.logic.data.OccurrenceSearchResult;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class RawTextRestServices {
 
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   @ResponseBody
-  public Page<Occurrence> search(
+  public OccurrenceSearchResult search(
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       @RequestParam(required = false) String predicate,
@@ -57,7 +58,13 @@ public class RawTextRestServices {
       @RequestParam(required = false) String assigneeUsername
   ) throws Exception {
     User assigneeUser = userLogic.getUser(assigneeUsername);
-    return occurrenceDao.search(page, pageSize, predicate, minOccurrence, approved, null, assigneeUser);
+    final Page<Occurrence> p = occurrenceDao.search(page, pageSize, predicate, minOccurrence,
+        approved, null, assigneeUser);
+    final long approvedCount;
+    if (approved) approvedCount = p.getTotalElements();
+    else approvedCount = occurrenceDao.search(page, pageSize, predicate, minOccurrence,
+        true, null, assigneeUser).getTotalElements();
+    return new OccurrenceSearchResult(p, approvedCount);
   }
 
   @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
