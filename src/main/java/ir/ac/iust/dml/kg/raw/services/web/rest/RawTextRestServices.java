@@ -47,6 +47,14 @@ public class RawTextRestServices {
     return e;
   }
 
+  @RequestMapping(value = "/export", method = RequestMethod.GET)
+  @ResponseBody
+  public List<Occurrence> export() throws Exception {
+    return occurrenceDao.search(0, 1000000,
+        null, false, null, true,
+        null, null).getContent();
+  }
+
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   @ResponseBody
   public OccurrenceSearchResult search(
