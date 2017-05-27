@@ -10,6 +10,6 @@ import org.springframework.data.domain.Page;
  */
 public interface OccurrenceRepositoryCustom {
 
-  Page<Occurrence> search(int page, int pageSize, String predicate, Integer minOccurrence,
-                          Boolean approved, Boolean assignee, User assigneeUser);
+  Page<Occurrence> search(int page, int pageSize, String predicate, boolean like,
+                          Integer minOccurrence, Boolean approved, Boolean assignee, User assigneeUser);
 }

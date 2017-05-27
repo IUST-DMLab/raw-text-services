@@ -53,21 +53,22 @@ public class RawTextRestServices {
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       @RequestParam(required = false) String predicate,
+      @RequestParam(required = false, defaultValue = "true") boolean like,
       @RequestParam(required = false) Integer minOccurrence,
       @RequestParam(required = false) Boolean approved,
       @RequestParam(required = false) String assigneeUsername
   ) throws Exception {
     User assigneeUser = userLogic.getUser(assigneeUsername);
-    final Page<Occurrence> p = occurrenceDao.search(page, pageSize, predicate, minOccurrence,
+    final Page<Occurrence> p = occurrenceDao.search(page, pageSize, predicate, like, minOccurrence,
         approved, null, assigneeUser);
     final long approvedCount;
     if (approved != null && approved) approvedCount = p.getTotalElements();
-    else approvedCount = occurrenceDao.search(0, 1, predicate, minOccurrence,
+    else approvedCount = occurrenceDao.search(0, 1, predicate, like, minOccurrence,
         true, null, assigneeUser).getTotalElements();
 
     final long rejectedCount;
     if (approved != null && !approved) rejectedCount = p.getTotalElements();
-    else rejectedCount = occurrenceDao.search(0, 1, predicate, minOccurrence,
+    else rejectedCount = occurrenceDao.search(0, 1, predicate, like, minOccurrence,
         false, null, assigneeUser).getTotalElements();
 
     return new OccurrenceSearchResult(p, approvedCount, rejectedCount);

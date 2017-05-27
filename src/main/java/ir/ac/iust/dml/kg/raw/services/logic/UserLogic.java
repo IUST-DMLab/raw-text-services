@@ -46,7 +46,7 @@ public class UserLogic {
   public int assign(String username, String predicate, int count) {
     final User user = db.findByUsername(username);
     if (user == null) return 0;
-    final Page<Occurrence> occurrences = occurrenceDao.search(0, count, predicate,
+    final Page<Occurrence> occurrences = occurrenceDao.search(0, count, predicate, false,
         null, null, false, null);
     occurrences.forEach(it -> {
           it.setAssignee(user);

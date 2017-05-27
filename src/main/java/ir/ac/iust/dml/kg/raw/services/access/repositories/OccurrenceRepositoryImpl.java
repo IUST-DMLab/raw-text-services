@@ -18,10 +18,12 @@ public class OccurrenceRepositoryImpl implements OccurrenceRepositoryCustom {
   private MongoTemplate op;
 
   @Override
-  public Page<Occurrence> search(int page, int pageSize, String predicate, Integer minOccurrence, Boolean approved,
+  public Page<Occurrence> search(int page, int pageSize, String predicate, boolean like,
+                                 Integer minOccurrence, Boolean approved,
                                  Boolean assignee, User assigneeUser) {
     Query query = new Query();
-    if (predicate != null) query.addCriteria(Criteria.where("predicate").regex(predicate));
+    if (predicate != null && like) query.addCriteria(Criteria.where("predicate").regex(predicate));
+    if (predicate != null && !like) query.addCriteria(Criteria.where("predicate").is(predicate));
     if (minOccurrence != null) query.addCriteria(Criteria.where("occurrence").gte(minOccurrence));
     if (approved != null) query.addCriteria(Criteria.where("approved").is(approved));
     if (assignee != null) query.addCriteria(Criteria.where("assignee").exists(assignee));
