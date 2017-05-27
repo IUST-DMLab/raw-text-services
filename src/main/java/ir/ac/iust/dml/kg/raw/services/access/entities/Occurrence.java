@@ -18,16 +18,20 @@ public class Occurrence {
   @Indexed
   private int occurrence;
   private String normalized;
+  @JsonIgnore
   private List<String> words;
   @Field("postag")
+  @JsonIgnore
   private List<String> posTags;
   @Field("generalized_sentence")
   private String generalizedSentence;
   private String raw;
   private String object;
   @Field("subject_type")
+  @JsonIgnore
   private String subjectType;
   @Field("object_type")
+  @JsonIgnore
   private String objectType;
   @Indexed
   private String predicate;
