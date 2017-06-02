@@ -6,6 +6,7 @@ import ir.ac.iust.dml.kg.raw.SentenceTokenizer;
 import ir.ac.iust.dml.kg.raw.TextProcess;
 import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
 import ir.ac.iust.dml.kg.raw.rulebased.Triple;
+import ir.ac.iust.dml.kg.raw.services.access.entities.KeyAndCount;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Rule;
 import ir.ac.iust.dml.kg.raw.services.access.entities.User;
@@ -80,6 +81,16 @@ public class RawTextRestServices {
         false, null, assigneeUser).getTotalElements();
 
     return new OccurrenceSearchResult(p, approvedCount, rejectedCount);
+  }
+
+  @RequestMapping(value = "/predicates", method = RequestMethod.GET)
+  @ResponseBody
+  public Page<KeyAndCount> predicates(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(required = false) String predicate
+  ) throws Exception {
+    return occurrenceDao.predicates(page, pageSize, predicate);
   }
 
   @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
