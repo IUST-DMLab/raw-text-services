@@ -6,14 +6,14 @@ import ir.ac.iust.dml.kg.raw.SentenceTokenizer;
 import ir.ac.iust.dml.kg.raw.TextProcess;
 import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
 import ir.ac.iust.dml.kg.raw.rulebased.Triple;
-import ir.ac.iust.dml.kg.raw.services.access.entities.KeyAndCount;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Rule;
 import ir.ac.iust.dml.kg.raw.services.access.entities.User;
-import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.RuleRepository;
+import ir.ac.iust.dml.kg.raw.services.logic.OccurrenceLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.UserLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.data.OccurrenceSearchResult;
+import ir.ac.iust.dml.kg.raw.services.logic.data.PredicateData;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import java.util.List;
 public class RawTextRestServices {
 
   @Autowired
-  private OccurrenceRepository occurrenceDao;
+  private OccurrenceLogic occurrenceLogic;
   @Autowired
   private UserLogic userLogic;
   @Autowired
@@ -41,19 +41,17 @@ public class RawTextRestServices {
   @ResponseBody
   public Occurrence edit(@RequestParam String id,
                          @RequestParam(required = false) Boolean approved) throws Exception {
-    final Occurrence e = occurrenceDao.findOne(new ObjectId(id));
+    final Occurrence e = occurrenceLogic.findOne(id);
     if (e == null) return null;
     e.setApproved(approved);
-    occurrenceDao.save(e);
+    occurrenceLogic.save(e);
     return e;
   }
 
   @RequestMapping(value = "/export", method = RequestMethod.GET)
   @ResponseBody
   public List<Occurrence> export() throws Exception {
-    return occurrenceDao.search(0, 1000000,
-        null, false, null, true,
-        null, null).getContent();
+    return occurrenceLogic.export().getContent();
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -67,30 +65,17 @@ public class RawTextRestServices {
       @RequestParam(required = false) Boolean approved,
       @RequestParam(required = false) String assigneeUsername
   ) throws Exception {
-    User assigneeUser = userLogic.getUser(assigneeUsername);
-    final Page<Occurrence> p = occurrenceDao.search(page, pageSize, predicate, like, minOccurrence,
-        approved, null, assigneeUser);
-    final long approvedCount;
-    if (approved != null && approved) approvedCount = p.getTotalElements();
-    else approvedCount = occurrenceDao.search(0, 1, predicate, like, minOccurrence,
-        true, null, assigneeUser).getTotalElements();
-
-    final long rejectedCount;
-    if (approved != null && !approved) rejectedCount = p.getTotalElements();
-    else rejectedCount = occurrenceDao.search(0, 1, predicate, like, minOccurrence,
-        false, null, assigneeUser).getTotalElements();
-
-    return new OccurrenceSearchResult(p, approvedCount, rejectedCount);
+    return occurrenceLogic.search(page, pageSize, predicate, like, minOccurrence, approved, assigneeUsername);
   }
 
   @RequestMapping(value = "/predicates", method = RequestMethod.GET)
   @ResponseBody
-  public Page<KeyAndCount> predicates(
+  public Page<PredicateData> predicates(
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       @RequestParam(required = false) String predicate
   ) throws Exception {
-    return occurrenceDao.predicates(page, pageSize, predicate);
+    return occurrenceLogic.predicates(page, pageSize, predicate);
   }
 
   @RequestMapping(value = "/listUsers", method = RequestMethod.GET)

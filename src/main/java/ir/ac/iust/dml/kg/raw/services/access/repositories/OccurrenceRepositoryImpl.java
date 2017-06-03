@@ -3,6 +3,7 @@ package ir.ac.iust.dml.kg.raw.services.access.repositories;
 import ir.ac.iust.dml.kg.raw.services.access.entities.KeyAndCount;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.User;
+import ir.ac.iust.dml.kg.raw.services.access.entities.UserAndCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -61,6 +62,16 @@ public class OccurrenceRepositoryImpl implements OccurrenceRepositoryCustom {
 
     return new PageImpl<>(result.getMappedResults(),
         new PageRequest(page, pageSize), totalCount);
+  }
+
+  @Override
+  public List<UserAndCount> assignees(String predicate) {
+    final GroupOperation group = Aggregation.group("assignee").count()
+        .as("count");
+    final MatchOperation match = Aggregation.match(Criteria.where("predicate").regex(predicate));
+
+    return op.aggregate(Aggregation.newAggregation(match, group),
+        Occurrence.class, UserAndCount.class).getMappedResults();
   }
 
   public static <T> Page<T> page(MongoTemplate op, Query query, int page, int pageSize, Class<T> entityClass) {

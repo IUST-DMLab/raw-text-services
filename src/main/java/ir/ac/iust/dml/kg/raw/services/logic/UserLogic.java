@@ -4,6 +4,7 @@ import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.UserRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -58,5 +59,9 @@ public class UserLogic {
 
   public User getUser(String username) {
     return db.findByUsername(username);
+  }
+
+  public User getUserById(ObjectId id) {
+    return db.findOne(id);
   }
 }
