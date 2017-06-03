@@ -38,14 +38,17 @@ public class OccurrenceLogic {
         true, null, null);
   }
 
-  public Page<PredicateData> predicates(int page, int pageSize, String predicate) {
+  public Page<PredicateData> predicates(int page, int pageSize, String predicate, boolean fillAssignees) {
     final Page<KeyAndCount> predicates = dao.predicates(page, pageSize, predicate);
     final List<PredicateData> data = new ArrayList<>();
     predicates.getContent().forEach(p -> {
       final PredicateData d = new PredicateData(p.getKey(), p.getCount());
-      final List<UserAndCount> assignees = dao.assignees(p.getKey());
-      assignees.forEach(a -> d.getAssignees().add(
-          new AssigneeData(a.getKey() == null ? null : a.getKey().getUsername(), a.getCount())));
+      if (fillAssignees) {
+        d.setAssignees(new ArrayList<>());
+        final List<UserAndCount> assignees = dao.assignees(p.getKey());
+        assignees.forEach(a -> d.getAssignees().add(
+            new AssigneeData(a.getKey() == null ? null : a.getKey().getUsername(), a.getCount())));
+      }
       data.add(d);
     });
     return new PageImpl<>(data, new PageRequest(page, pageSize), predicates.getTotalPages());
@@ -67,5 +70,13 @@ public class OccurrenceLogic {
         false, null, assigneeUser).getTotalElements();
 
     return new OccurrenceSearchResult(p, approvedCount, rejectedCount);
+  }
+
+  public List<AssigneeData> assigneeCount(String predicate) {
+    final List<AssigneeData> result = new ArrayList<>();
+    final List<UserAndCount> assignees = dao.assignees(predicate);
+    assignees.forEach(a -> result.add(
+        new AssigneeData(a.getKey() == null ? null : a.getKey().getUsername(), a.getCount())));
+    return result;
   }
 }

@@ -1,12 +1,11 @@
 package ir.ac.iust.dml.kg.raw.services.logic.data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PredicateData {
   private String predicate;
   private long count;
-  private List<AssigneeData> assignees = new ArrayList<>();
+  private List<AssigneeData> assignees;
 
   public PredicateData(String predicate, long count) {
     this.predicate = predicate;

@@ -12,6 +12,7 @@ import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.RuleRepository;
 import ir.ac.iust.dml.kg.raw.services.logic.OccurrenceLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.UserLogic;
+import ir.ac.iust.dml.kg.raw.services.logic.data.AssigneeData;
 import ir.ac.iust.dml.kg.raw.services.logic.data.OccurrenceSearchResult;
 import ir.ac.iust.dml.kg.raw.services.logic.data.PredicateData;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
@@ -73,9 +74,18 @@ public class RawTextRestServices {
   public Page<PredicateData> predicates(
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(required = false) String predicate,
+      @RequestParam(required = false, defaultValue = "false") boolean fillAssignees
+  ) throws Exception {
+    return occurrenceLogic.predicates(page, pageSize, predicate, fillAssignees);
+  }
+
+  @RequestMapping(value = "/assigneeCount", method = RequestMethod.GET)
+  @ResponseBody
+  public List<AssigneeData> assigneeCount(
       @RequestParam(required = false) String predicate
   ) throws Exception {
-    return occurrenceLogic.predicates(page, pageSize, predicate);
+    return occurrenceLogic.assigneeCount(predicate);
   }
 
   @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
