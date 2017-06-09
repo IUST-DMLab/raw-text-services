@@ -15,6 +15,7 @@ import ir.ac.iust.dml.kg.raw.services.logic.UserLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.data.AssigneeData;
 import ir.ac.iust.dml.kg.raw.services.logic.data.OccurrenceSearchResult;
 import ir.ac.iust.dml.kg.raw.services.logic.data.PredicateData;
+import ir.ac.iust.dml.kg.raw.services.tree.ParsingLogic;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,16 @@ public class RawTextRestServices {
   @Autowired
   private UserLogic userLogic;
   @Autowired
+  private ParsingLogic parsingLogic;
+  @Autowired
   private RuleRepository ruleDao;
   private final TextProcess tp = new TextProcess();
+
+  @RequestMapping(value = "/test", method = RequestMethod.GET)
+  @ResponseBody
+  public String test() throws Exception {
+    return parsingLogic.test();
+  }
 
   @RequestMapping(value = "/approve", method = RequestMethod.GET)
   @ResponseBody
