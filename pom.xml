@@ -23,6 +23,15 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
@@ -60,6 +69,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>ir.ac.iust.dml.kg.raw</groupId>
+            <artifactId>raw-text-access</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>ir.ac.iust.dml.kg.raw.extractTriple</groupId>
             <artifactId>extractTriple</artifactId>
