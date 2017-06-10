@@ -49,8 +49,11 @@ public class RawTextRestServices {
   @ResponseBody
   public Page<DependencyPattern> searchPattern(
       @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int pageSize) throws Exception {
-    return parsingLogic.searchPattern(page, pageSize);
+      @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(required = false) Integer maxSentenceLength,
+      @RequestParam(required = false) Integer minSize,
+      @RequestParam(required = false) Boolean approved) throws Exception {
+    return parsingLogic.searchPattern(page, pageSize, maxSentenceLength, minSize, approved);
   }
 
   @RequestMapping(value = "/savePattern", method = RequestMethod.POST)
