@@ -6,6 +6,7 @@ import ir.ac.iust.dml.kg.raw.SentenceTokenizer;
 import ir.ac.iust.dml.kg.raw.TextProcess;
 import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
 import ir.ac.iust.dml.kg.raw.rulebased.Triple;
+import ir.ac.iust.dml.kg.raw.services.access.entities.DependencyPattern;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Rule;
 import ir.ac.iust.dml.kg.raw.services.access.entities.User;
@@ -15,8 +16,10 @@ import ir.ac.iust.dml.kg.raw.services.logic.UserLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.data.AssigneeData;
 import ir.ac.iust.dml.kg.raw.services.logic.data.OccurrenceSearchResult;
 import ir.ac.iust.dml.kg.raw.services.logic.data.PredicateData;
+import ir.ac.iust.dml.kg.raw.services.tree.ParsedWord;
 import ir.ac.iust.dml.kg.raw.services.tree.ParsingLogic;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
+import ir.ac.iust.dml.kg.raw.services.web.rest.data.TextBucket;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,12 +42,35 @@ public class RawTextRestServices {
   private ParsingLogic parsingLogic;
   @Autowired
   private RuleRepository ruleDao;
+
   private final TextProcess tp = new TextProcess();
 
-  @RequestMapping(value = "/test", method = RequestMethod.GET)
+  @RequestMapping(value = "/searchPattern", method = RequestMethod.GET)
   @ResponseBody
-  public String test() throws Exception {
-    return parsingLogic.test();
+  public Page<DependencyPattern> searchPattern(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int pageSize) throws Exception {
+    return parsingLogic.searchPattern(page, pageSize);
+  }
+
+  @RequestMapping(value = "/savePattern", method = RequestMethod.POST)
+  @ResponseBody
+  public DependencyPattern savePattern(@RequestBody DependencyPattern data) throws Exception {
+    if (data == null) return null;
+    return parsingLogic.save(data);
+  }
+
+  @RequestMapping(value = "/dependencyParsePost", method = RequestMethod.POST)
+  @ResponseBody
+  public List<ParsedWord> dependencyParsePost(@RequestBody TextBucket textBucket) throws Exception {
+    if (textBucket.getText() == null) return null;
+    return parsingLogic.dependencySentence(textBucket.getText());
+  }
+
+  @RequestMapping(value = "/dependencyParseGet", method = RequestMethod.POST)
+  @ResponseBody
+  public List<ParsedWord> dependencyParseGet(@RequestParam String text) throws Exception {
+    return parsingLogic.dependencySentence(text);
   }
 
   @RequestMapping(value = "/approve", method = RequestMethod.GET)
