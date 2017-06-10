@@ -71,7 +71,7 @@ public class RawTextRestServices {
     return parsingLogic.dependencySentence(textBucket.getText());
   }
 
-  @RequestMapping(value = "/dependencyParseGet", method = RequestMethod.POST)
+  @RequestMapping(value = "/dependencyParseGet", method = RequestMethod.GET)
   @ResponseBody
   public List<ParsedWord> dependencyParseGet(@RequestParam String text) throws Exception {
     return parsingLogic.dependencySentence(text);
