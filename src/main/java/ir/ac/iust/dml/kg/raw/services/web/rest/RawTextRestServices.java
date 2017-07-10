@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import ir.ac.iust.dml.kg.raw.SentenceTokenizer;
 import ir.ac.iust.dml.kg.raw.TextProcess;
 import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
+import ir.ac.iust.dml.kg.raw.rulebased.RuleAndPredicate;
 import ir.ac.iust.dml.kg.raw.rulebased.Triple;
 import ir.ac.iust.dml.kg.raw.services.access.entities.DependencyPattern;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
@@ -189,6 +190,29 @@ public class RawTextRestServices {
     ruleDao.delete(e);
     return e;
   }
+
+  @RequestMapping(value = "/extractTripleFromText",  method = RequestMethod.POST,produces  = "text/plain;charset=UTF-8")
+  @ResponseBody
+  public List<Triple> extractTriplesByRules(@RequestBody TextBucket data) throws Exception {
+    List<Triple> result = new ArrayList<>();
+    RuleTestData ruleTestData=new RuleTestData();
+    ruleTestData.setText(data.getText());
+    List<Rule> rules=ruleDao.findAll();
+    List<RuleAndPredicate> ruleAndPredicates=new ArrayList<>();
+    for(Rule rule:rules)
+    {
+      RuleAndPredicate ruleAndPredicate=new RuleAndPredicate();
+      ruleAndPredicate.setRule(rule.getRule());
+      ruleAndPredicate.setPredicate(rule.getPredicate());
+      ruleAndPredicates.add(ruleAndPredicate);
+    }
+
+    ruleTestData.setRules(ruleAndPredicates);
+    result=ruleTest(ruleTestData);
+    return result;
+  }
+
+
 
   @RequestMapping(value = "/ruleTest", method = RequestMethod.POST)
   @ResponseBody
