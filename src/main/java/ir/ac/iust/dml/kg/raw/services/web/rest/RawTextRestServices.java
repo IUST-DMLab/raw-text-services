@@ -21,7 +21,7 @@ import ir.ac.iust.dml.kg.raw.services.tree.ParsedWord;
 import ir.ac.iust.dml.kg.raw.services.tree.ParsingLogic;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.TextBucket;
-import ir.ac.iust.dml.kg.raw.utils.dump.triple.TripleData;
+import ir.ac.iust.dml.kg.raw.triple.RawTriple;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -81,15 +82,15 @@ public class RawTextRestServices {
 
   @RequestMapping(value = "/predictByPatternPost", method = RequestMethod.POST)
   @ResponseBody
-  public List<TripleData> predictByPatternPost(@RequestBody TextBucket textBucket) throws Exception {
+  public List<RawTriple> predictByPatternPost(@RequestBody TextBucket textBucket) throws Exception {
     if (textBucket.getText() == null) return null;
-    return parsingLogic.predict(textBucket.getText());
+    return parsingLogic.predict("http://dmls.iust.ac.ir/raw/", (new Date()).toString(), textBucket.getText());
   }
 
   @RequestMapping(value = "/predictByPatternGet", method = RequestMethod.GET)
   @ResponseBody
-  public List<TripleData> predictByPatternGet(@RequestParam String text) throws Exception {
-    return parsingLogic.predict(text);
+  public List<RawTriple> predictByPatternGet(@RequestParam String text) throws Exception {
+    return parsingLogic.predict("http://dmls.iust.ac.ir/raw/", (new Date()).toString(), text);
   }
 
   @RequestMapping(value = "/approve", method = RequestMethod.GET)
