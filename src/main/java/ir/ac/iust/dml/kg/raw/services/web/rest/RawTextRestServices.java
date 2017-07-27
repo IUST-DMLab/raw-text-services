@@ -6,7 +6,6 @@ import ir.ac.iust.dml.kg.raw.SentenceTokenizer;
 import ir.ac.iust.dml.kg.raw.TextProcess;
 import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
 import ir.ac.iust.dml.kg.raw.rulebased.RuleAndPredicate;
-import ir.ac.iust.dml.kg.raw.rulebased.Triple;
 import ir.ac.iust.dml.kg.raw.services.access.entities.DependencyPattern;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Rule;
@@ -84,13 +83,13 @@ public class RawTextRestServices {
   @ResponseBody
   public List<RawTriple> predictByPatternPost(@RequestBody TextBucket textBucket) throws Exception {
     if (textBucket.getText() == null) return null;
-    return parsingLogic.predict("http://dmls.iust.ac.ir/raw/", (new Date()).toString(), textBucket.getText());
+    return parsingLogic.extract("http://dmls.iust.ac.ir/raw/", (new Date()).toString(), textBucket.getText());
   }
 
   @RequestMapping(value = "/predictByPatternGet", method = RequestMethod.GET)
   @ResponseBody
   public List<RawTriple> predictByPatternGet(@RequestParam String text) throws Exception {
-    return parsingLogic.predict("http://dmls.iust.ac.ir/raw/", (new Date()).toString(), text);
+    return parsingLogic.extract("http://dmls.iust.ac.ir/raw/", (new Date()).toString(), text);
   }
 
   @RequestMapping(value = "/approve", method = RequestMethod.GET)
@@ -194,8 +193,8 @@ public class RawTextRestServices {
 
   @RequestMapping(value = "/extractTripleFromText",  method = RequestMethod.POST,produces  = "text/plain;charset=UTF-8")
   @ResponseBody
-  public List<Triple> extractTriplesByRules(@RequestBody TextBucket data) throws Exception {
-    List<Triple> result = new ArrayList<>();
+  public List<RawTriple> extractTriplesByRules(@RequestBody TextBucket data) throws Exception {
+    List<RawTriple> result = new ArrayList<>();
     RuleTestData ruleTestData=new RuleTestData();
     ruleTestData.setText(data.getText());
     List<Rule> rules=ruleDao.findAll();
@@ -217,8 +216,8 @@ public class RawTextRestServices {
 
   @RequestMapping(value = "/ruleTest", method = RequestMethod.POST)
   @ResponseBody
-  public List<Triple> ruleTest(@RequestBody RuleTestData data) throws Exception {
-    List<Triple> result = new ArrayList<>();
+  public List<RawTriple> ruleTest(@RequestBody RuleTestData data) throws Exception {
+    List<RawTriple> result = new ArrayList<>();
     ExtractTriple extractTriple = new ExtractTriple(data.getRules());
     final List<String> lines = SentenceTokenizer.SentenceSplitterRaw(data.getText());
     for (String line : lines) {
