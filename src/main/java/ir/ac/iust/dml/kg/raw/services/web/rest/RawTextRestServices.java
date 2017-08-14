@@ -4,6 +4,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import io.swagger.annotations.Api;
 import ir.ac.iust.dml.kg.raw.SentenceTokenizer;
 import ir.ac.iust.dml.kg.raw.TextProcess;
+import ir.ac.iust.dml.kg.raw.extractor.ResolvedEntityToken;
 import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
 import ir.ac.iust.dml.kg.raw.rulebased.RuleAndPredicate;
 import ir.ac.iust.dml.kg.raw.services.access.entities.DependencyPattern;
@@ -11,6 +12,7 @@ import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Rule;
 import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.RuleRepository;
+import ir.ac.iust.dml.kg.raw.services.logic.FKGfyLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.OccurrenceLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.UserLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.data.AssigneeData;
@@ -43,9 +45,17 @@ public class RawTextRestServices {
   @Autowired
   private ParsingLogic parsingLogic;
   @Autowired
+  private FKGfyLogic fkGfyLogic;
+  @Autowired
   private RuleRepository ruleDao;
 
   private final TextProcess tp = new TextProcess();
+
+  @RequestMapping(value = "/FKGfy", method = RequestMethod.POST)
+  @ResponseBody
+  public List<List<ResolvedEntityToken>> FKGfy(@RequestBody TextBucket data) throws Exception {
+    return fkGfyLogic.fkgFy(data.getText());
+  }
 
   @RequestMapping(value = "/searchPattern", method = RequestMethod.GET)
   @ResponseBody
