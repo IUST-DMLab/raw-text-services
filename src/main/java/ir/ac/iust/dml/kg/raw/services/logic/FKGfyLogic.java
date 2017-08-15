@@ -12,6 +12,7 @@ public class FKGfyLogic {
 
   public List<List<ResolvedEntityToken>> fkgFy(String text) {
     if (extractor == null) extractor = new EnhancedEntityExtractor();
-    return extractor.extract(text);
+    List<List<ResolvedEntityToken>> resolved = extractor.extract(text);
+    return extractor.resolveByName(resolved);
   }
 }
