@@ -143,7 +143,7 @@ public class RawTextRestServices {
       @RequestParam(required = false) String assigneeUsername
   ) throws Exception {
     final String user = user(request);
-    logger.info("current user is %s", user);
+    logger.info("current user is " + user);
     if (!user.equals("superuser") && assigneeUsername == null) assigneeUsername = user;
     logger.info("assigned user is " + assigneeUsername);
     return occurrenceLogic.search(page, pageSize, predicate, like, minOccurrence, approved, assigneeUsername);

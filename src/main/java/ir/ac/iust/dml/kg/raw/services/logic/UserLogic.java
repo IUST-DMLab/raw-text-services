@@ -70,7 +70,7 @@ public class UserLogic {
   }
 
   public void addUser(String username) {
-    logger.info("adding user with username %s", username);
+    logger.info("adding user with username " + username);
     db.save(new User(username));
   }
 }
