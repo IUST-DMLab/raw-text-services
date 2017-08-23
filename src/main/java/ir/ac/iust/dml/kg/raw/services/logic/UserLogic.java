@@ -4,7 +4,10 @@ import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.User;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.UserRepository;
+import ir.ac.iust.dml.kg.raw.services.web.rest.RawTextRestServices;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.List;
 @Service
 public class UserLogic {
 
+  private static final Logger logger = LoggerFactory.getLogger(RawTextRestServices.class);
   @Autowired
   private UserRepository db;
   @Autowired
@@ -63,5 +67,10 @@ public class UserLogic {
 
   public User getUserById(ObjectId id) {
     return db.findOne(id);
+  }
+
+  public void addUser(String username) {
+    logger.info("adding user with username %s", username);
+    db.save(new User(username));
   }
 }

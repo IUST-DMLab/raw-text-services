@@ -57,6 +57,7 @@ public class OccurrenceLogic {
   public OccurrenceSearchResult search(int page, int pageSize, String predicate, boolean like,
                                        Integer minOccurrence, Boolean approved, String assigneeUsername) {
     User assigneeUser = userLogic.getUser(assigneeUsername);
+    if (assigneeUser == null) userLogic.addUser(assigneeUsername);
     final Page<Occurrence> p = dao.search(page, pageSize, predicate, like, minOccurrence,
         approved, null, assigneeUser);
     final long approvedCount;

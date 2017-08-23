@@ -24,11 +24,14 @@ import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.TextBucket;
 import ir.ac.iust.dml.kg.raw.triple.RawTriple;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +41,7 @@ import java.util.List;
 @Api(tags = "raw", description = "سرویس‌های متن خام")
 public class RawTextRestServices {
 
+  private static final Logger logger = LoggerFactory.getLogger(RawTextRestServices.class);
   @Autowired
   private OccurrenceLogic occurrenceLogic;
   @Autowired
@@ -55,6 +59,13 @@ public class RawTextRestServices {
   @ResponseBody
   public List<List<ResolvedEntityToken>> FKGfy(@RequestBody TextBucket data) throws Exception {
     return fkGfyLogic.fkgFy(data.getText());
+  }
+
+  private String user(HttpServletRequest request) throws Exception {
+    String proxyUserId = request.getHeader("x-auth-username");
+    if (proxyUserId != null && !proxyUserId.isEmpty()) {
+      return proxyUserId;
+    } else throw new Exception("no user!");
   }
 
   @RequestMapping(value = "/searchPattern", method = RequestMethod.GET)
@@ -122,6 +133,7 @@ public class RawTextRestServices {
   @RequestMapping(value = "/search", method = RequestMethod.GET)
   @ResponseBody
   public OccurrenceSearchResult search(
+      HttpServletRequest request,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       @RequestParam(required = false) String predicate,
@@ -130,6 +142,10 @@ public class RawTextRestServices {
       @RequestParam(required = false) Boolean approved,
       @RequestParam(required = false) String assigneeUsername
   ) throws Exception {
+    final String user = user(request);
+    logger.info("current user is %s", user);
+    if (!user.equals("superuser") && assigneeUsername == null) assigneeUsername = user;
+    logger.info("assigned user is " + assigneeUsername);
     return occurrenceLogic.search(page, pageSize, predicate, like, minOccurrence, approved, assigneeUsername);
   }
 
@@ -161,10 +177,12 @@ public class RawTextRestServices {
   @RequestMapping(value = "/assign", method = RequestMethod.GET)
   @ResponseBody
   public int assign(
+      HttpServletRequest request,
       @RequestParam String username,
       @RequestParam(required = false) String predicate,
       @RequestParam int count
   ) throws Exception {
+    if (username == null) username = user(request);
     return userLogic.assign(username, predicate, count);
   }
 
@@ -201,27 +219,25 @@ public class RawTextRestServices {
     return e;
   }
 
-  @RequestMapping(value = "/extractTripleFromText",  method = RequestMethod.POST,produces  = "text/plain;charset=UTF-8")
+  @RequestMapping(value = "/extractTripleFromText", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
   @ResponseBody
   public List<RawTriple> extractTriplesByRules(@RequestBody TextBucket data) throws Exception {
     List<RawTriple> result = new ArrayList<>();
-    RuleTestData ruleTestData=new RuleTestData();
+    RuleTestData ruleTestData = new RuleTestData();
     ruleTestData.setText(data.getText());
-    List<Rule> rules=ruleDao.findAll();
-    List<RuleAndPredicate> ruleAndPredicates=new ArrayList<>();
-    for(Rule rule:rules)
-    {
-      RuleAndPredicate ruleAndPredicate=new RuleAndPredicate();
+    List<Rule> rules = ruleDao.findAll();
+    List<RuleAndPredicate> ruleAndPredicates = new ArrayList<>();
+    for (Rule rule : rules) {
+      RuleAndPredicate ruleAndPredicate = new RuleAndPredicate();
       ruleAndPredicate.setRule(rule.getRule());
       ruleAndPredicate.setPredicate(rule.getPredicate());
       ruleAndPredicates.add(ruleAndPredicate);
     }
 
     ruleTestData.setRules(ruleAndPredicates);
-    result=ruleTest(ruleTestData);
+    result = ruleTest(ruleTestData);
     return result;
   }
-
 
 
   @RequestMapping(value = "/ruleTest", method = RequestMethod.POST)
