@@ -69,8 +69,10 @@ public class UserLogic {
     return db.findOne(id);
   }
 
-  public void addUser(String username) {
+  public User addUser(String username) {
     logger.info("adding user with username " + username);
-    db.save(new User(username));
+    final User user = new User(username);
+    db.save(user);
+    return user;
   }
 }

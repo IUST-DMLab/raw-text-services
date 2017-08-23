@@ -146,7 +146,7 @@ public class RawTextRestServices {
     logger.info("current user is " + user);
     if (!user.equals("superuser") && assigneeUsername == null) assigneeUsername = user;
     logger.info("assigned user is " + assigneeUsername);
-    return occurrenceLogic.search(page, pageSize, predicate, like, minOccurrence, approved, assigneeUsername);
+    return occurrenceLogic.search(user, page, pageSize, predicate, like, minOccurrence, approved, assigneeUsername);
   }
 
   @RequestMapping(value = "/predicates", method = RequestMethod.GET)
