@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Random;
 
@@ -17,7 +18,7 @@ import java.util.Random;
 @ComponentScan
 public class Application {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     SpringApplication app = new SpringApplication(Application.class);
     Properties properties = new Properties();
     if (args.length > 0) properties.put("server.port", 10200 + (new Random().nextInt(1000)));
