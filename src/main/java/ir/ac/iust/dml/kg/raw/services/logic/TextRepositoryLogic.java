@@ -208,6 +208,7 @@ public class TextRepositoryLogic {
     occurrence.setOccurrence(1);
     occurrence.setApproved(true);
     occurrence.setAssignee(user);
+    occurrence.setSelectedByUser(user);
     occurrence.setNormalized(join(selection.getTokens()));
     occurrence.setPosTags(selection.getTokens().stream().map(ResolvedEntityToken::getPos).collect(Collectors.toList()));
     occurrence.setRaw(occurrence.getNormalized());
