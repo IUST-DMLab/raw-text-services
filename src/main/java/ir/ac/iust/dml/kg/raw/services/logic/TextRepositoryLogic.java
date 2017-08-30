@@ -53,13 +53,15 @@ public class TextRepositoryLogic {
     return EnhancedEntityExtractor.importFromFile(p);
   }
 
-  public boolean mark(String path) {
+  public boolean mark(String username, String path) {
     final Path p = getPath(path);
     if (Files.isDirectory(p)) return false;
     Article article = articleRepository.findByPath(path);
     if (article != null) return false;
     final List<List<ResolvedEntityToken>> content = EnhancedEntityExtractor.importFromFile(p);
     if (content == null) return false;
+    final User user = userLogic.getUserOrCreate(username);
+    if (user == null) return false;
     article = new Article();
     article.setPath(path);
     article.setTitle(path.contains("/") ? path.substring(path.lastIndexOf('/') + 1) : path);
@@ -67,6 +69,7 @@ public class TextRepositoryLogic {
     article.setNumberOfRelations(0);
     article.setPercentOfRelations(0f);
     article.setApproved(false);
+    article.setSelectedByUser(user);
     for (List<ResolvedEntityToken> sentence : content) {
       final ArticleSentence articleSentence = new ArticleSentence();
       articleSentence.setNumberOfRelations(0);
@@ -83,12 +86,17 @@ public class TextRepositoryLogic {
   }
 
   public Page<Article> searchArticles(int page, int pageSize, String path, String title,
-                                      Integer minPercentOfRelations, Boolean approved) {
-    return articleRepository.search(page, pageSize, path, title, minPercentOfRelations, approved);
+                                      Integer minPercentOfRelations, Boolean approved,
+                                      String selectedByUsername) {
+    User selectedByUser = null;
+    if (selectedByUsername != null) selectedByUser = userLogic.getUser(selectedByUsername);
+    return articleRepository.search(page, pageSize, path, title, minPercentOfRelations, approved, selectedByUser);
   }
 
-  public Article saveArticle(Article article) {
+  public Article saveArticle(String username, Article article) {
     if (article.getIdentifier() == null) return null;
+    final User user = userLogic.getUserOrCreate(username);
+    if (user == null) return null;
     final Article articleInDB = articleRepository.findOne(new ObjectId(article.getIdentifier()));
     if (articleInDB == null) return null;
     articleInDB.setTitle(article.getTitle());

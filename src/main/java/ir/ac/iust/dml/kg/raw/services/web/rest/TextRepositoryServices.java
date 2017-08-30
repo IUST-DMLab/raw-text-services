@@ -38,8 +38,9 @@ public class TextRepositoryServices {
 
   @RequestMapping(value = "/mark", method = RequestMethod.GET)
   @ResponseBody
-  public boolean mark(@RequestParam(required = false) String path) {
-    return logic.mark(path);
+  public boolean mark(HttpServletRequest request,
+                      @RequestParam(required = false) String path) throws Exception {
+    return logic.mark(RawTextRestServices.user(request), path);
   }
 
   @RequestMapping(value = "/searchArticles", method = RequestMethod.GET)
@@ -49,14 +50,16 @@ public class TextRepositoryServices {
                                       @RequestParam(required = false) String path,
                                       @RequestParam(required = false) String title,
                                       @RequestParam(required = false) Integer minPercentOfRelations,
-                                      @RequestParam(required = false) Boolean approved) {
-    return logic.searchArticles(page, pageSize, path, title, minPercentOfRelations, approved);
+                                      @RequestParam(required = false) Boolean approved,
+                                      @RequestParam(required = false) String slectedByUsername) {
+    return logic.searchArticles(page, pageSize, path, title, minPercentOfRelations, approved, slectedByUsername);
   }
 
   @RequestMapping(value = "/saveArticle", method = RequestMethod.POST)
   @ResponseBody
-  public Article saveArticle(@RequestBody Article article) {
-    return logic.saveArticle(article);
+  public Article saveArticle(HttpServletRequest request,
+                             @RequestBody Article article) throws Exception {
+    return logic.saveArticle(RawTextRestServices.user(request), article);
   }
 
   @RequestMapping(value = "/selectForDependencyRelation", method = RequestMethod.POST)
