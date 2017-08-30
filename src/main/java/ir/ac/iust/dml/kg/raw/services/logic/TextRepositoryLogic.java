@@ -178,9 +178,9 @@ public class TextRepositoryLogic {
         if (r.indexes.contains(i)) {
           if (!seen[j] && !replaced) {
             builder.append(r.replaceWith).append(' ');
-            replaced = true;
             seen[j] = true;
           }
+          if (seen[j]) replaced = true;
         }
       }
       if (!replaced) builder.append(token.getWord()).append(' ');
@@ -191,37 +191,48 @@ public class TextRepositoryLogic {
 
   private String getString(List<ResolvedEntityToken> tokens, List<Integer> indexes) {
     StringBuilder builder = new StringBuilder();
-    for (int index : indexes) builder.append(tokens.get(index)).append(' ');
+    for (int index : indexes) builder.append(tokens.get(index).getWord()).append(' ');
     builder.setLength(builder.length() - 1);
     return builder.toString();
   }
 
   public Occurrence selectForOccurrence(String username, SentenceSelection selection) {
-    if (selection.getTokens() == null
-        || selection.getSubject() == null
-        || selection.getObject() == null
-        || (selection.getPredicate() == null && selection.getManualPredicate() == null))
+    if ((selection.getTokens() == null || selection.getTokens().isEmpty())
+        || selection.getSubject() == null || selection.getSubject().isEmpty()
+        || selection.getObject() == null || selection.getObject().isEmpty()
+        || ((selection.getPredicate() == null || selection.getPredicate().isEmpty())
+        && selection.getManualPredicate() == null))
       return null;
     final User user = userLogic.getUserOrCreate(username);
     if (user == null) return null;
-    Occurrence occurrence = new Occurrence();
+    final String normalized = join(selection.getTokens());
+    final String generalized = replaceByIndex(selection.getTokens(),
+        new Replacement(selection.getSubject(), "$SUBJ"),
+        new Replacement(selection.getObject(), "$OBJ"));
+    Occurrence occurrence = occurrenceRepository.getByNormalized(normalized);
+    if (occurrence != null && occurrence.getGeneralizedSentence().equals(generalized)) {
+      occurrence.setOccurrence(occurrence.getOccurrence() + 1);
+      occurrence.setSelectedByUser(user);
+      occurrence.setApproved(true);
+      occurrenceRepository.save(occurrence);
+      return occurrence;
+    }
+    occurrence = new Occurrence();
     occurrence.setOccurrence(1);
     occurrence.setApproved(true);
     occurrence.setAssignee(user);
     occurrence.setSelectedByUser(user);
-    occurrence.setNormalized(join(selection.getTokens()));
+    occurrence.setNormalized(normalized);
     occurrence.setPosTags(selection.getTokens().stream().map(ResolvedEntityToken::getPos).collect(Collectors.toList()));
     occurrence.setRaw(occurrence.getNormalized());
     occurrence.setWords(selection.getTokens().stream().map(ResolvedEntityToken::getWord).collect(Collectors.toList()));
     occurrence.setDepTreeHash(buildTreeHash(selection.getTokens()));
-    occurrence.setGeneralizedSentence(
-        replaceByIndex(selection.getTokens(),
-            new Replacement(selection.getSubject(), "$SUBJ"),
-            new Replacement(selection.getObject(), "$OBJ")));
-    if (selection.getManualPredicate() != null) occurrence.setPredicate(selection.getManualPredicate());
+    occurrence.setGeneralizedSentence(generalized);
+    if (selection.getManualPredicate() != null && !selection.getManualPredicate().isEmpty())
+      occurrence.setPredicate(selection.getManualPredicate());
     else occurrence.setPredicate(getString(selection.getTokens(), selection.getPredicate()));
     occurrence.setObject(getString(selection.getTokens(), selection.getObject()));
-    occurrence.setSubject(getString(selection.getTokens(), selection.getPredicate()));
+    occurrence.setSubject(getString(selection.getTokens(), selection.getSubject()));
     occurrenceRepository.save(occurrence);
     return occurrence;
   }
