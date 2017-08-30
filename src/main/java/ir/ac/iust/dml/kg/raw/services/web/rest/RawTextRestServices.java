@@ -61,10 +61,10 @@ public class RawTextRestServices {
     return fkGfyLogic.fkgFy(data.getText());
   }
 
-  private String user(HttpServletRequest request) throws Exception {
-    String proxyUserId = request.getHeader("x-auth-username");
-    if (proxyUserId != null && !proxyUserId.isEmpty()) {
-      return proxyUserId;
+  static String user(HttpServletRequest request) throws Exception {
+    String proxyUsername = request.getHeader("x-auth-username");
+    if (proxyUsername != null && !proxyUsername.isEmpty()) {
+      return proxyUsername;
     } else throw new Exception("no user!");
   }
 

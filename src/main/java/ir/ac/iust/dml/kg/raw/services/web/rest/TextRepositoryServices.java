@@ -3,12 +3,16 @@ package ir.ac.iust.dml.kg.raw.services.web.rest;
 import io.swagger.annotations.Api;
 import ir.ac.iust.dml.kg.raw.extractor.ResolvedEntityToken;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Article;
+import ir.ac.iust.dml.kg.raw.services.access.entities.DependencyPattern;
+import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.logic.TextRepositoryLogic;
+import ir.ac.iust.dml.kg.raw.services.logic.data.SentenceSelection;
 import ir.ac.iust.dml.kg.raw.services.logic.data.TextRepositoryFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
@@ -51,5 +55,19 @@ public class TextRepositoryServices {
   @ResponseBody
   public Article saveArticle(@RequestBody Article article) {
     return logic.saveArticle(article);
+  }
+
+  @RequestMapping(value = "/selectForDependencyRelation", method = RequestMethod.POST)
+  @ResponseBody
+  public DependencyPattern selectForDependencyRelation(HttpServletRequest request,
+                                                       @RequestBody SentenceSelection selection) throws Exception {
+    return logic.selectForDependencyRelation(RawTextRestServices.user(request), selection);
+  }
+
+  @RequestMapping(value = "/selectForOccurrence", method = RequestMethod.POST)
+  @ResponseBody
+  public Occurrence selectForOccurence(HttpServletRequest request,
+                                       @RequestBody SentenceSelection selection) throws Exception {
+    return logic.selectForOccurrence(RawTextRestServices.user(request), selection);
   }
 }
