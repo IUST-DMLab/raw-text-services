@@ -46,9 +46,11 @@ public class TextRepositoryServices {
   @ResponseBody
   public Page<Article> searchArticles(@RequestParam(required = false, defaultValue = "0") int page,
                                       @RequestParam int pageSize,
+                                      @RequestParam(required = false) String path,
+                                      @RequestParam(required = false) String title,
                                       @RequestParam(required = false) Integer minPercentOfRelations,
                                       @RequestParam(required = false) Boolean approved) {
-    return logic.searchArticles(page, pageSize, minPercentOfRelations, approved);
+    return logic.searchArticles(page, pageSize, path, title, minPercentOfRelations, approved);
   }
 
   @RequestMapping(value = "/saveArticle", method = RequestMethod.POST)

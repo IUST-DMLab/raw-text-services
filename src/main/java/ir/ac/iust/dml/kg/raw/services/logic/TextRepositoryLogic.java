@@ -82,8 +82,9 @@ public class TextRepositoryLogic {
     return true;
   }
 
-  public Page<Article> searchArticles(int page, int pageSize, Integer minPercentOfRelations, Boolean approved) {
-    return articleRepository.search(page, pageSize, minPercentOfRelations, approved);
+  public Page<Article> searchArticles(int page, int pageSize, String path, String title,
+                                      Integer minPercentOfRelations, Boolean approved) {
+    return articleRepository.search(page, pageSize, path, title, minPercentOfRelations, approved);
   }
 
   public Article saveArticle(Article article) {
