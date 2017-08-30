@@ -13,7 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserLogic {
@@ -67,6 +69,19 @@ public class UserLogic {
 
   public User getUserById(ObjectId id) {
     return db.findOne(id);
+  }
+
+
+  private Map<String, User> cache = new HashMap<>();
+
+  public User getUserOrCreate(String username) {
+    User user = cache.get(username);
+    if (user == null) {
+      user = getUser(username);
+      if (user == null) user = addUser(username);
+      cache.put(username, user);
+    }
+    return user;
   }
 
   public User addUser(String username) {

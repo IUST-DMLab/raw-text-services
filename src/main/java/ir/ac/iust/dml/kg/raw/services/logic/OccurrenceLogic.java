@@ -16,9 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class OccurrenceLogic {
@@ -56,12 +54,10 @@ public class OccurrenceLogic {
     return new PageImpl<>(data, new PageRequest(page, pageSize), predicates.getTotalPages());
   }
 
-  Map<String, User> cache = new HashMap<>();
-
   public OccurrenceSearchResult search(String username, int page, int pageSize, String predicate, boolean like,
                                        Integer minOccurrence, Boolean approved, String assigneeUsername) {
-    getUser(username);
-    User assigneeUser = assigneeUsername == null ? null : getUser(assigneeUsername);
+    userLogic.getUserOrCreate(username);
+    User assigneeUser = assigneeUsername == null ? null : userLogic.getUserOrCreate(assigneeUsername);
     final Page<Occurrence> p = dao.search(page, pageSize, predicate, like, minOccurrence,
         approved, null, assigneeUser);
     final long approvedCount;
@@ -75,16 +71,6 @@ public class OccurrenceLogic {
         false, null, assigneeUser).getTotalElements();
 
     return new OccurrenceSearchResult(p, approvedCount, rejectedCount);
-  }
-
-  private User getUser(String username) {
-    User user = cache.get(username);
-    if (user == null) {
-      user = userLogic.getUser(username);
-      if (user == null) user = userLogic.addUser(username);
-      cache.put(username, user);
-    }
-    return user;
   }
 
   public List<AssigneeData> assigneeCount(String predicate) {

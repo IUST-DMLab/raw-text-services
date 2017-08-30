@@ -6,7 +6,6 @@ import ir.ac.iust.dml.kg.raw.services.access.entities.*;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.ArticleRepository;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.DependencyPatternRepository;
 import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
-import ir.ac.iust.dml.kg.raw.services.access.repositories.UserRepository;
 import ir.ac.iust.dml.kg.raw.services.logic.data.SentenceSelection;
 import ir.ac.iust.dml.kg.raw.services.logic.data.TextRepositoryFile;
 import ir.ac.iust.dml.kg.raw.utils.ConfigReader;
@@ -33,10 +32,10 @@ public class TextRepositoryLogic {
   @Autowired
   OccurrenceRepository occurrenceRepository;
   @Autowired
-  UserRepository userRepository;
+  UserLogic userLogic;
 
   private Path getPath(String path) {
-    if (path == null || path.isEmpty() || path.contains("..")) return mainPath;
+    if (path == null || path.isEmpty() || path.contains("..") || path.startsWith("/")) return mainPath;
     return mainPath.resolve(path);
   }
 
@@ -128,7 +127,7 @@ public class TextRepositoryLogic {
 
   public DependencyPattern selectForDependencyRelation(String username, SentenceSelection selection) {
     if (selection.getTokens() == null) return null;
-    final User user = userRepository.findByUsername(username);
+    final User user = userLogic.getUserOrCreate(username);
     if (user == null) return null;
     String hash = buildTreeHash(selection.getTokens());
 
@@ -202,7 +201,7 @@ public class TextRepositoryLogic {
         || selection.getObject() == null
         || (selection.getPredicate() == null && selection.getManualPredicate() == null))
       return null;
-    final User user = userRepository.findByUsername(username);
+    final User user = userLogic.getUserOrCreate(username);
     if (user == null) return null;
     Occurrence occurrence = new Occurrence();
     occurrence.setOccurrence(1);
