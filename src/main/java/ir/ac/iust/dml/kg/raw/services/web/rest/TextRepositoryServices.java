@@ -46,8 +46,8 @@ public class TextRepositoryServices {
 
   @RequestMapping(value = "/stats", method = RequestMethod.GET)
   @ResponseBody
-  public RepositoryStats stats(HttpServletRequest request) throws Exception {
-    return logic.stats(RawTextRestServices.user(request));
+  public RepositoryStats stats() throws Exception {
+    return logic.stats();
   }
 
   @RequestMapping(value = "/searchArticles", method = RequestMethod.GET)

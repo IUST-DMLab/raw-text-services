@@ -166,9 +166,7 @@ public class TextRepositoryLogic {
     return pattern;
   }
 
-  public RepositoryStats stats(String username) {
-    final User user = userLogic.getUserOrCreate(username);
-    if (user == null) return null;
+  public RepositoryStats stats() {
     final List<Article> articles = articleRepository.findAll();
     final RepositoryStats stats = new RepositoryStats();
     articles.forEach(article -> {
