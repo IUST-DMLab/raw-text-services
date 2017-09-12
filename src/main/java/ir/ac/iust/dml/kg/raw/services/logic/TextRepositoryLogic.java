@@ -8,6 +8,7 @@ import ir.ac.iust.dml.kg.raw.services.access.repositories.DependencyPatternRepos
 import ir.ac.iust.dml.kg.raw.services.access.repositories.OccurrenceRepository;
 import ir.ac.iust.dml.kg.raw.services.logic.data.SentenceSelection;
 import ir.ac.iust.dml.kg.raw.services.logic.data.TextRepositoryFile;
+import ir.ac.iust.dml.kg.raw.services.web.rest.data.RepositoryStats;
 import ir.ac.iust.dml.kg.raw.utils.ConfigReader;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,6 +164,23 @@ public class TextRepositoryLogic {
     }
     dependencyPatternRepository.save(pattern);
     return pattern;
+  }
+
+  public RepositoryStats stats(String username) {
+    final User user = userLogic.getUserOrCreate(username);
+    if (user == null) return null;
+    final List<Article> articles = articleRepository.findAll();
+    final RepositoryStats stats = new RepositoryStats();
+    articles.forEach(article -> {
+      if (article.isApproved()) {
+        final RepositoryStats.SourceStats ss = article.getPath().contains("news")
+            ? stats.getNews() : stats.getWikipedia();
+        ss.setNumberOfArticles(ss.getNumberOfArticles() + 1);
+        ss.setNumberOfSentences(ss.getNumberOfRelations() + article.getNumberOfSentences());
+        ss.setNumberOfRelations(ss.getNumberOfRelations() + article.getNumberOfRelations());
+      }
+    });
+    return stats;
   }
 
   private class Replacement {

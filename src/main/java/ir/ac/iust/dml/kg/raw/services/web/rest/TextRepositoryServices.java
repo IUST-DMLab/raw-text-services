@@ -8,6 +8,7 @@ import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.logic.TextRepositoryLogic;
 import ir.ac.iust.dml.kg.raw.services.logic.data.SentenceSelection;
 import ir.ac.iust.dml.kg.raw.services.logic.data.TextRepositoryFile;
+import ir.ac.iust.dml.kg.raw.services.web.rest.data.RepositoryStats;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,12 @@ public class TextRepositoryServices {
   public boolean mark(HttpServletRequest request,
                       @RequestParam(required = false) String path) throws Exception {
     return logic.mark(RawTextRestServices.user(request), path);
+  }
+
+  @RequestMapping(value = "/stats", method = RequestMethod.GET)
+  @ResponseBody
+  public RepositoryStats stats(HttpServletRequest request) throws Exception {
+    return logic.stats(RawTextRestServices.user(request));
   }
 
   @RequestMapping(value = "/searchArticles", method = RequestMethod.GET)
