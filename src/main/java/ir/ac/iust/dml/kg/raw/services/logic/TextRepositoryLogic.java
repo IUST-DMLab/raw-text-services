@@ -174,7 +174,7 @@ public class TextRepositoryLogic {
         final RepositoryStats.SourceStats ss = article.getPath().contains("news")
             ? stats.getNews() : stats.getWikipedia();
         ss.setNumberOfArticles(ss.getNumberOfArticles() + 1);
-        ss.setNumberOfSentences(ss.getNumberOfRelations() + article.getNumberOfSentences());
+        ss.setNumberOfSentences(ss.getNumberOfSentences() + article.getNumberOfSentences());
         ss.setNumberOfRelations(ss.getNumberOfRelations() + article.getNumberOfRelations());
       }
     });
