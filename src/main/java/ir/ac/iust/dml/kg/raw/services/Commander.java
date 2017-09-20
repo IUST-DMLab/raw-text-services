@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.raw.services;
 
 import ir.ac.iust.dml.kg.raw.extractor.EnhancedEntityExtractor;
+import ir.ac.iust.dml.kg.raw.services.split.SplitLogic;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,6 +24,12 @@ class Commander {
       case "exportWiki":
         extractor.exportWiki(path, maxAmbiguities, true,
             contextDisambiguationThreshold, true, true, true);
+        break;
+      case "conjCount":
+        SplitLogic.INSTANCE.findConjunctions(path);
+        break;
+      case "conjAndDepCount":
+        SplitLogic.INSTANCE.findConjunctionsAndDep(path);
         break;
     }
     System.exit(0);
