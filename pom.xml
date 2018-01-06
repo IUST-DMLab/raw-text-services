@@ -81,9 +81,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>ir.ac.iust.dml.kg.raw.extractTriple</groupId>
-            <artifactId>extractTriple</artifactId>
-            <version>0.2.0</version>
+          <groupId>ir.ac.iust.dml.kg.raw</groupId>
+          <artifactId>distant-supervision-re</artifactId>
+          <version>0.9.0</version>
         </dependency>
         <dependency>
             <groupId>ir.ac.iust.dml.kg.raw</groupId>
@@ -95,6 +95,11 @@
             <artifactId>jhazm</artifactId>
             <version>0.2</version>
         </dependency>
+      <dependency>
+        <groupId>ir.ac.iust.dml.kg.raw.extractTriple</groupId>
+        <artifactId>extractTriple</artifactId>
+        <version>0.2.0</version>
+      </dependency>
         <!-- Spring and Transactions -->
         <dependency>
             <groupId>org.springframework</groupId>

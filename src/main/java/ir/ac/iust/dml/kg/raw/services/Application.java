@@ -21,7 +21,7 @@ import java.util.Random;
 //@ImportResource(value = {})
 @EnableAutoConfiguration(exclude = {
     FilterRegistrationConfiguration.class})
-@ComponentScan
+@ComponentScan(value = "ir.ac.iust.dml.kg.raw")
 public class Application {
 
   public static void main(String[] args) throws IOException {

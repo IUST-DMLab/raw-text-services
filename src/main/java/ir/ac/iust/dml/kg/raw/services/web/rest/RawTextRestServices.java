@@ -13,6 +13,7 @@ import ir.ac.iust.dml.kg.raw.TextProcess;
 import ir.ac.iust.dml.kg.raw.extractor.ResolvedEntityToken;
 import ir.ac.iust.dml.kg.raw.rulebased.ExtractTriple;
 import ir.ac.iust.dml.kg.raw.rulebased.RuleAndPredicate;
+import ir.ac.iust.dml.kg.raw.rulebased.RuleBasedTripleExtractor;
 import ir.ac.iust.dml.kg.raw.services.access.entities.DependencyPattern;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Occurrence;
 import ir.ac.iust.dml.kg.raw.services.access.entities.Rule;
@@ -65,6 +66,12 @@ public class RawTextRestServices {
   @ResponseBody
   public List<List<ResolvedEntityToken>> FKGfy(@RequestBody TextBucket data) throws Exception {
     return fkGfyLogic.fkgFy(data.getText());
+  }
+
+  @RequestMapping(value = "/extractTriples", method = RequestMethod.POST)
+  @ResponseBody
+  public List<RawTriple> extractAll(@RequestBody TextBucket data) throws Exception {
+    return fkGfyLogic.extract(data.getText());
   }
 
   static String user(HttpServletRequest request) throws Exception {
@@ -200,6 +207,9 @@ public class RawTextRestServices {
     return ruleDao.findAll(new PageRequest(page, pageSize));
   }
 
+  @Autowired
+  RuleBasedTripleExtractor ruleBasedTripleExtractor;
+
   @RequestMapping(value = "/editRule", method = RequestMethod.GET)
   @ResponseBody
   public Rule editRule(
@@ -213,6 +223,10 @@ public class RawTextRestServices {
     e.setPredicate(predicate);
     e.setApproved(approved);
     ruleDao.save(e);
+    try {
+      ruleBasedTripleExtractor.init();
+    } catch (Throwable ignored) {
+    }
     return e;
   }
 
@@ -222,6 +236,7 @@ public class RawTextRestServices {
     final Rule e = ruleDao.findOne(new ObjectId(id));
     if (e == null) return null;
     ruleDao.delete(e);
+    ruleBasedTripleExtractor.init();
     return e;
   }
 
