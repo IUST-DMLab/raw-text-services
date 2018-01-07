@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class FKGfyLogic {
@@ -72,6 +69,7 @@ public class FKGfyLogic {
       LOGGER.error("error in relation extraction", throwable);
     }
     allTriples.sort(Comparator.comparingDouble(RawTriple::getAccuracy));
+    Collections.reverse(allTriples);
     return allTriples;
   }
 }
