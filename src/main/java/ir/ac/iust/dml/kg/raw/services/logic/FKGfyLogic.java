@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -70,6 +71,7 @@ public class FKGfyLogic {
     } catch (Throwable throwable) {
       LOGGER.error("error in relation extraction", throwable);
     }
+    allTriples.sort(Comparator.comparingDouble(RawTriple::getAccuracy));
     return allTriples;
   }
 }
