@@ -32,11 +32,7 @@ public class FKGfyLogic {
   public List<List<ResolvedEntityToken>> fkgFy(String text) {
     if (extractor == null) extractor = new EnhancedEntityExtractor();
     final List<List<ResolvedEntityToken>> resolved = extractor.extract(text);
-    extractor.disambiguateByContext(resolved, 0);
-    resolved.forEach(sentence -> sentence.forEach(token -> {
-      if (token.getResource() != null && token.getResource().getRank() < 0.01)
-        token.getAmbiguities().add(0, token.getResource());
-    }));
+    extractor.disambiguateByContext(resolved, 0, 0.01f);
     extractor.resolveByName(resolved);
     extractor.resolvePronouns(resolved);
     return resolved;
