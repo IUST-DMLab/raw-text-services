@@ -30,6 +30,7 @@ import ir.ac.iust.dml.kg.raw.services.tree.ParsingLogic;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.RuleTestData;
 import ir.ac.iust.dml.kg.raw.services.web.rest.data.TextBucket;
 import ir.ac.iust.dml.kg.raw.triple.RawTriple;
+import kotlin.Pair;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,18 @@ public class RawTextRestServices {
   @ResponseBody
   public List<List<ResolvedEntityToken>> FKGfy(@RequestBody TextBucket data) throws Exception {
     return fkGfyLogic.fkgFy(data.getText());
+  }
+
+  @RequestMapping(value = "/related", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> related(@RequestParam String uri) {
+    return fkGfyLogic.related(uri);
+  }
+
+  @RequestMapping(value = "/weightedRelated", method = RequestMethod.GET)
+  @ResponseBody
+  public List<Pair<String, Integer>> weightedRelated(@RequestParam String uri) {
+    return fkGfyLogic.weightedRelated(uri);
   }
 
   @RequestMapping(value = "/extractTriples", method = RequestMethod.POST)

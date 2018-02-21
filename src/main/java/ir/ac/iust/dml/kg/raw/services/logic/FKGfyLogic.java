@@ -13,6 +13,7 @@ import ir.ac.iust.dml.kg.raw.extractor.EnhancedEntityExtractor;
 import ir.ac.iust.dml.kg.raw.extractor.ResolvedEntityToken;
 import ir.ac.iust.dml.kg.raw.triple.RawTriple;
 import ir.ac.iust.dml.kg.raw.triple.RawTripleExtractor;
+import kotlin.Pair;
 import org.maltparser.concurrent.graph.ConcurrentDependencyGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FKGfyLogic {
@@ -71,5 +73,13 @@ public class FKGfyLogic {
     allTriples.sort(Comparator.comparingDouble(RawTriple::getAccuracy));
     Collections.reverse(allTriples);
     return allTriples;
+  }
+
+  public List<String> related(String uri) {
+    return weightedRelated(uri).parallelStream().map(Pair::component1).collect(Collectors.toList());
+  }
+
+  public List<Pair<String, Integer>> weightedRelated(String uri) {
+    return extractor.relatedUris(uri, 0, 0.01f);
   }
 }
