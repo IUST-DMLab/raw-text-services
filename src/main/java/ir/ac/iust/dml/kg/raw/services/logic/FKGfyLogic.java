@@ -34,7 +34,7 @@ public class FKGfyLogic {
   public List<List<ResolvedEntityToken>> fkgFy(String text) {
     if (extractor == null) extractor = new EnhancedEntityExtractor();
     final List<List<ResolvedEntityToken>> resolved = extractor.extract(text, false);
-    extractor.disambiguateByContext(resolved, 3, 0, 0.01f);
+    extractor.disambiguateByContext(resolved, 3, 0, 0.00001f);
     extractor.resolveByName(resolved);
     extractor.resolvePronouns(resolved);
     return resolved;
