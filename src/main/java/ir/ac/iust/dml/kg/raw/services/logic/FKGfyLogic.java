@@ -8,6 +8,7 @@ package ir.ac.iust.dml.kg.raw.services.logic;
 
 import edu.stanford.nlp.ling.TaggedWord;
 import ir.ac.iust.dml.kg.raw.DependencyParser;
+import ir.ac.iust.dml.kg.raw.Normalizer;
 import ir.ac.iust.dml.kg.raw.extractor.DependencyInformation;
 import ir.ac.iust.dml.kg.raw.extractor.EnhancedEntityExtractor;
 import ir.ac.iust.dml.kg.raw.extractor.ResolvedEntityToken;
@@ -33,7 +34,8 @@ public class FKGfyLogic {
   @SuppressWarnings("Duplicates")
   public List<List<ResolvedEntityToken>> fkgFy(String text) {
     if (extractor == null) extractor = new EnhancedEntityExtractor();
-    final List<List<ResolvedEntityToken>> resolved = extractor.extract(text, false);
+    final List<List<ResolvedEntityToken>> resolved = extractor.extract(
+        Normalizer.removeBrackets(Normalizer.normalize(text)), false);
     extractor.disambiguateByContext(resolved, 3, 0, 0.00001f);
     extractor.resolveByName(resolved);
     extractor.resolvePronouns(resolved);
