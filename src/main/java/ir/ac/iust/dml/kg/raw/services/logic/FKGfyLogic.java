@@ -13,6 +13,7 @@ import ir.ac.iust.dml.kg.raw.SentenceBranch;
 import ir.ac.iust.dml.kg.raw.extractor.DependencyInformation;
 import ir.ac.iust.dml.kg.raw.extractor.EnhancedEntityExtractor;
 import ir.ac.iust.dml.kg.raw.extractor.ResolvedEntityToken;
+import ir.ac.iust.dml.kg.raw.services.tree.ParsingLogic;
 import ir.ac.iust.dml.kg.raw.triple.RawTriple;
 import ir.ac.iust.dml.kg.raw.triple.RawTripleExtractor;
 import kotlin.Pair;
@@ -61,10 +62,11 @@ public class FKGfyLogic {
     final List<RawTriple> allTriples = new ArrayList<>();
     try {
       final List<List<ResolvedEntityToken>> fkgfyed = fkgFy(text);
-      addDepInfo(fkgfyed);
       for (RawTripleExtractor rawTripleExtractor : extractors) {
         try {
-          final List<RawTriple> triples = rawTripleExtractor.extract("raw-text-ui", new Date().toString(), fkgfyed);
+          final List<List<ResolvedEntityToken>> copy = ResolvedEntityToken.copySentences(fkgfyed);
+          if (rawTripleExtractor instanceof ParsingLogic) addDepInfo(copy);
+          final List<RawTriple> triples = rawTripleExtractor.extract("raw-text-ui", new Date().toString(), copy);
           if (triples != null) allTriples.addAll(triples);
         } catch (Throwable extractionError) {
           LOGGER.error("error in extractor", extractionError);
