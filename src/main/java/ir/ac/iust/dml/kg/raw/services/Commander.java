@@ -24,11 +24,11 @@ class Commander {
     switch (args[0]) {
       case "export":
         final String pattern = args.length > 4 ? args[4] : ".*\\.txt";
-        extractor.exportFolder(path, pattern, maxAmbiguities, true,
+        extractor.exportFolder(path, pattern, maxAmbiguities, true, true,
             contextDisambiguationThreshold, true, true, true);
         break;
       case "exportWiki":
-        extractor.exportWiki(path, maxAmbiguities, true,
+        extractor.exportWiki(path, maxAmbiguities, true, true,
             contextDisambiguationThreshold, true, true, true);
         break;
       case "conjCount":

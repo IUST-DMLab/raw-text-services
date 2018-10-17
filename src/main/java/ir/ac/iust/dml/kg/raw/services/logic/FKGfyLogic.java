@@ -39,6 +39,7 @@ public class FKGfyLogic {
     final List<List<ResolvedEntityToken>> resolved = extractor.extract(
         SentenceBranch.summarize(Normalizer.removeBrackets(Normalizer.normalize(text))), false);
     extractor.disambiguateByContext(resolved, 3, 0, 0.00001f);
+    extractor.integrateNER(resolved);
     extractor.resolveByName(resolved);
     extractor.resolvePronouns(resolved);
     return resolved;
