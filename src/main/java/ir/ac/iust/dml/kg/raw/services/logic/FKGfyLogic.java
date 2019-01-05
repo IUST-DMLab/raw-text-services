@@ -34,7 +34,7 @@ public class FKGfyLogic {
   private List<RawTripleExtractor> extractors;
 
   @SuppressWarnings("Duplicates")
-  public List<List<ResolvedEntityToken>> fkgFy(String text) {
+  public List<List<ResolvedEntityToken>> fkgFy(String text, boolean depParse) {
     if (extractor == null) extractor = new EnhancedEntityExtractor();
     final List<List<ResolvedEntityToken>> resolved = extractor.extract(
         SentenceBranch.summarize(Normalizer.removeBrackets(Normalizer.normalize(text))), false);
@@ -42,6 +42,7 @@ public class FKGfyLogic {
     extractor.integrateNER(resolved);
     extractor.resolveByName(resolved);
     extractor.resolvePronouns(resolved);
+    if(depParse) extractor.dependencyParse(resolved);
     return resolved;
   }
 
@@ -62,7 +63,7 @@ public class FKGfyLogic {
   public List<RawTriple> extract(String text) {
     final List<RawTriple> allTriples = new ArrayList<>();
     try {
-      final List<List<ResolvedEntityToken>> fkgfyed = fkgFy(text);
+      final List<List<ResolvedEntityToken>> fkgfyed = fkgFy(text, false);
       for (RawTripleExtractor rawTripleExtractor : extractors) {
         try {
           final List<List<ResolvedEntityToken>> copy = ResolvedEntityToken.copySentences(fkgfyed);

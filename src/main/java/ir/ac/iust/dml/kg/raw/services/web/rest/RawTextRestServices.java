@@ -66,7 +66,7 @@ public class RawTextRestServices {
   @RequestMapping(value = "/FKGfy", method = RequestMethod.POST)
   @ResponseBody
   public List<List<ResolvedEntityToken>> FKGfy(@RequestBody TextBucket data) throws Exception {
-    return fkGfyLogic.fkgFy(data.getText());
+    return fkGfyLogic.fkgFy(data.getText(), true);
   }
 
   @RequestMapping(value = "/related", method = RequestMethod.GET)
