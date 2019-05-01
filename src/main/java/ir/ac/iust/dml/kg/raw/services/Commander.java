@@ -19,12 +19,13 @@ class Commander {
   void processArgs(String[] args) throws IOException {
     final EnhancedEntityExtractor extractor = new EnhancedEntityExtractor();
     final Path path = Paths.get(args[1]);
-    final Integer maxAmbiguities = args.length > 2 ? Integer.parseInt(args[2]) : 3;
-    final Float contextDisambiguationThreshold = args.length > 3 ? Float.parseFloat(args[3]) : 0.0011f;
+    final String encoding = args[2];
+    final Integer maxAmbiguities = args.length > 3 ? Integer.parseInt(args[3]) : 4;
+    final Float contextDisambiguationThreshold = args.length > 4 ? Float.parseFloat(args[4]) : 0.0011f;
     switch (args[0]) {
       case "export":
-        final String pattern = args.length > 4 ? args[4] : ".*\\.txt";
-        extractor.exportFolder(path, pattern, maxAmbiguities, true, true,
+        final String pattern = args.length > 5 ? args[5] : ".*\\.txt";
+        extractor.exportFolder(path, encoding, pattern, maxAmbiguities, true, true,
             contextDisambiguationThreshold, true, true, true);
         break;
       case "exportWiki":
