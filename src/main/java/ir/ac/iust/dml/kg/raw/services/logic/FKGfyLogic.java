@@ -34,10 +34,14 @@ public class FKGfyLogic {
   private List<RawTripleExtractor> extractors;
 
   @SuppressWarnings("Duplicates")
-  public List<List<ResolvedEntityToken>> fkgFy(String text) {
+  public List<List<ResolvedEntityToken>> fkgFy(String text,
+                                               boolean simpleSummarize,
+                                               boolean removeBrackets) {
+    text = Normalizer.normalize(text);
+    if(removeBrackets) text = Normalizer.removeBrackets(text);
+    if(simpleSummarize) text = SentenceBranch.summarize(text);
     if (extractor == null) extractor = new EnhancedEntityExtractor();
-    final List<List<ResolvedEntityToken>> resolved = extractor.extract(
-        SentenceBranch.summarize(Normalizer.removeBrackets(Normalizer.normalize(text))), false);
+    final List<List<ResolvedEntityToken>> resolved = extractor.extract(text, false);
     extractor.disambiguateByContext(resolved, 3, 0, 0.00001f);
     extractor.integrateNER(resolved);
     extractor.resolveByName(resolved);
@@ -59,10 +63,12 @@ public class FKGfyLogic {
   }
 
   @SuppressWarnings("Duplicates")
-  public List<RawTriple> extract(String text) {
+  public List<RawTriple> extract(String text,
+                                 boolean simpleSummarize,
+                                 boolean removeBrackets) {
     final List<RawTriple> allTriples = new ArrayList<>();
     try {
-      final List<List<ResolvedEntityToken>> fkgfyed = fkgFy(text);
+      final List<List<ResolvedEntityToken>> fkgfyed = fkgFy(text, simpleSummarize, removeBrackets);
       for (RawTripleExtractor rawTripleExtractor : extractors) {
         try {
           final List<List<ResolvedEntityToken>> copy = ResolvedEntityToken.copySentences(fkgfyed);

@@ -66,7 +66,7 @@ public class RawTextRestServices {
   @RequestMapping(value = "/FKGfy", method = RequestMethod.POST)
   @ResponseBody
   public List<List<ResolvedEntityToken>> FKGfy(@RequestBody TextBucket data) throws Exception {
-    return fkGfyLogic.fkgFy(data.getText());
+    return fkGfyLogic.fkgFy(data.getText(), data.isSimpleSummarize(), data.isRemoveBrackets());
   }
 
   @RequestMapping(value = "/related", method = RequestMethod.GET)
@@ -84,7 +84,7 @@ public class RawTextRestServices {
   @RequestMapping(value = "/extractTriples", method = RequestMethod.POST)
   @ResponseBody
   public List<RawTriple> extractAll(@RequestBody TextBucket data) throws Exception {
-    return fkGfyLogic.extract(data.getText());
+    return fkGfyLogic.extract(data.getText(), true, true);
   }
 
   static String user(HttpServletRequest request) throws Exception {
